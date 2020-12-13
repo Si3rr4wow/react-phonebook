@@ -17,10 +17,11 @@ function findContacts(str) {
 app.get("/contacts", (req, res) => {
   const { term } = req.query;
   if (!term || typeof term !== "string" || term.length < 3) {
-    res.sendStatus(400);
-    res.json({
-      error: "term query param required and of minumum of 3 chars",
-    });
+    res
+      .status(400)
+      .json({
+        error: "term query param required and of minumum of 3 chars",
+      });
     return;
   }
 
