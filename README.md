@@ -7,7 +7,7 @@ This is a very simple React app that allows you to filter and view peoples conta
 ## Setup
 - You may need to be using Node 12+
 - Install with `npm install`.
-- You can run the server with `npm start-server`.
+- You can run the server with `npm run start-server`.
 - You can run the app with `npm start`.
 - Run tests with `npm test`.
 
