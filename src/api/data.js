@@ -50,6 +50,7 @@ const contacts = [
   "Zoro Zapp",
   "Zelda Zeldman",
 ].map((name, index) => ({
+  id: `con_${index}`,
   name,
   phone: `0123456789${index}`,
 }));
