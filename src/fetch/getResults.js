@@ -2,7 +2,7 @@ import { apiCall } from '../utils'
 
 const getResults = query => new Promise((resolve, reject) => {
   apiCall({
-    apiUrl: process.env.NODE_ENV === "development" ? (
+    apiUrl: process.env.NODE_ENV !== "production" ? (
       "http://localhost:8080/contacts/"
     ) : (
       "https://www.WhereTheAPILives.com/contacts/"

@@ -30,3 +30,32 @@ describe("Test the /contacts path", () => {
       });
   });
 });
+
+describe("Test the /contact path", () => {
+  test("It should 404 the GET method with no id param", done => {
+    request(app)
+      .get("/contact/")
+      .then(response => {
+        expect(response.statusCode).toBe(404);
+        done();
+      });
+  });
+  test("It should 404 the GET method with an id that matches no contacts", done => {
+    request(app)
+      .get("/contact/abc_1001")
+      .then(response => {
+        expect(response.statusCode).toBe(404);
+        expect(response.body.error).toBeTruthy();
+        done();
+      });
+  });
+  test("It should 200 the GET method with a an id param", done => {
+    request(app)
+      .get("/contact/con_0")
+      .then(response => {
+        expect(response.statusCode).toBe(200);
+        expect(response.body.error).toBeUndefined();
+        done();
+      });
+  });
+});

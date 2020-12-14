@@ -1,23 +1,8 @@
 const express = require("express");
 const app = express();
 
-const contactData = require("./data");
-
-function escapeRegExp(str) {
-  return str.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&");
-}
-function findContacts(str) {
-  const expr = RegExp(".*" + escapeRegExp(str) + ".*", "i");
-
-  return contactData.filter(function (item) {
-    return expr.test(item.name);
-  });
-}
-function findContact(contactId) {
-  return contactData.find(({ id }) => {
-    return id === contactId
-  })
-}
+const findContacts = require("./findContacts");
+const findContact = require("./findContact");
 
 const corsOrigin = process.env.NODE_ENV === "development" ? (
     "http://localhost:3000"
@@ -51,17 +36,19 @@ app.get("/contacts", (req, res) => {
 
 app.get("/contact/:id", (req, res) => {
   const { id } = req.params
-  if (!id || typeof id !== "string") {
+  const decodedId = decodeURIComponent(id);
+  const contact = findContact(decodedId);
+
+  if (!contact) {
     res
-      .status(400)
+      .status(404)
       .json({
-        error: "id param required",
+        error: "No contact could be found with the given id",
       });
     return;
   }
 
-  console.log('findContact(id)', findContact(id))
-  res.json(findContact(id));
+  res.json(contact);
 });
 
 module.exports = app

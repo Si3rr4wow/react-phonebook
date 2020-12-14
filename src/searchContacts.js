@@ -4,14 +4,10 @@ import Results from "./results";
 import getResults from "./fetch/getResults";
 import useQuery from "./hooks/useQuery"
 
-const fetchResults = term => new Promise((resolve, reject) => {
-  resolve(getResults(term))
-})
-
 const SearchClients = props => {
   const [{ term }, setQuery] = useQuery()
   const [state, setState] = useState({
-    currentSearch: "",
+    currentSearch: term || "",
     loading: false,
     results: [],
     error: null
@@ -20,7 +16,7 @@ const SearchClients = props => {
   useEffect(() => {
     if(!term || term.length < 3) { return }
 
-    fetchResults({ term }).then(results => {
+    getResults({ term }).then(results => {
       setState(s => ({
         ...s,
         currentSearch: term,

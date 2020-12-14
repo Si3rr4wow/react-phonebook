@@ -1,11 +1,11 @@
-import data from "./data";
+const data = require("./data");
 
 // from: http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
 function escapeRegExp(str) {
   return str.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&");
 }
 
-export default function (str) {
+module.exports = function (str) {
   if (!str) {
     return [];
   }

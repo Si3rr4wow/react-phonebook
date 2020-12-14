@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import ContactDetails from "./contactDetails";
 import getContact from "./fetch/getContact";
-import {
-  useParams
-} from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const ContactPage = () => {
   const params = useParams()
-  console.log('params', params)
   const [state, setState] = useState({
     data: {},
     loading: true,
