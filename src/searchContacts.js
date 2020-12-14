@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import SearchBox from "./searchBox";
 import Results from "./results";
+import Loading from "./loading";
 import getResults from "./fetch/getResults";
 import useQuery from "./hooks/useQuery"
 
@@ -52,7 +53,7 @@ const SearchClients = props => {
         onSubmit={onSubmit}
         currentSearch={state.currentSearch}
       />
-      {state.loading ? <div>Loading</div> : null }
+      {state.loading ? <Loading/> : null }
       {state.error ? <div>Something went wrong :(</div> : null }
       {state.results?.length ? <Results data={state.results} /> : ""}
     </section>

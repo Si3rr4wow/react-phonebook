@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ContactDetails from "./contactDetails";
+import Loading from "./loading";
 import getContact from "./fetch/getContact";
 import { useParams } from "react-router-dom";
 
@@ -27,7 +28,7 @@ const ContactPage = () => {
     })
   }, [params.id])
 
-  if(state.loading) { return <div>Loading</div> }
+  if(state.loading) { return <Loading/> }
   if(state.error) { return <div>Something went wrong :(</div> }
   return <ContactDetails data={state.data} />;
 }
