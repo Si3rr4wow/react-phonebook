@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 
 class Results extends React.Component {
   render() {
@@ -8,7 +8,7 @@ class Results extends React.Component {
         <ol>
           {this.props.data.map((item, i) => (
             <li key={i}>
-              <Link to={"/contact/" + item.name}>{item.name}</Link>
+              <Link to={"/contact/" + item.id}>{item.name}</Link>
             </li>
           ))}
         </ol>

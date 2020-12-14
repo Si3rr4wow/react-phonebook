@@ -1,53 +1,62 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import SearchBox from "./searchBox";
 import Results from "./results";
-import getResults from "./api/getResults";
+import getResults from "./fetch/getResults";
+import useQuery from "./hooks/useQuery"
 
-class SearchContacts extends React.Component {
-  constructor(props) {
-    super(props);
-    const { terms } = this.props.params || {};
-    const searchActive = Boolean(terms);
-    this.state = {
-      currentSearch: searchActive ? terms : "",
-      results: searchActive ? getResults(terms) : [],
-      searchActive: searchActive,
-    };
-    this.onSubmit = this.onSubmit.bind(this);
-  }
+const SearchClients = props => {
+  const [{ term }, setQuery] = useQuery()
+  const [state, setState] = useState({
+    currentSearch: term || "",
+    loading: false,
+    results: [],
+    error: null
+  })
 
-  onSubmit(searchStr) {
-    if (searchStr.length === 0) {
-      return this.clearSearch();
-    }
-    if (this.state.currentSearch !== searchStr) {
-      this.setState({
-        searchActive: true,
-        currentSearch: searchStr,
-        results: getResults(searchStr),
-      });
-    }
-  }
+  useEffect(() => {
+    if(!term || term.length < 3) { return }
 
-  clearSearch() {
-    this.setState({
-      searchActive: false,
+    getResults({ term }).then(results => {
+      setState(s => ({
+        ...s,
+        currentSearch: term,
+        loading: false,
+        results
+      }))
+    }, error => {
+      setState(s => ({
+        ...s,
+        loading: false,
+        error
+      }))
+    })
+  }, [term])
+
+  const clearSearch = () => {
+    setState({
       currentSearch: "",
       results: [],
     });
   }
 
-  render() {
-    return (
-      <section>
-        <SearchBox
-          onSubmit={this.onSubmit}
-          currentSearch={this.state.currentSearch}
-        />
-        {this.state.searchActive ? <Results data={this.state.results} /> : ""}
-      </section>
-    );
+  const onSubmit = (searchStr) => {
+    if (searchStr.length === 0) {
+      return clearSearch();
+    }
+    setQuery({ term: searchStr })
   }
+
+  return (
+    <section>
+      <SearchBox
+        onSubmit={onSubmit}
+        currentSearch={state.currentSearch}
+      />
+      {state.loading ? <div>Loading</div> : null }
+      {state.error ? <div>Something went wrong :(</div> : null }
+      {state.results?.length ? <Results data={state.results} /> : ""}
+    </section>
+  );
 }
 
-export default SearchContacts;
+export default SearchClients

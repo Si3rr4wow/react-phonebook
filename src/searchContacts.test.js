@@ -1,62 +1,58 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { act } from 'react-dom/test-utils';
 import SearchContacts from "./searchContacts";
+import { BrowserRouter as Router } from "react-router-dom";
+import getResults from "./fetch/getResults"
 
-jest.mock("./api/data", () => [
-  {
-    name: "George Michael",
-    phone: "01234567891",
-  },
-  {
-    name: "John Smith",
-    phone: "01234567892",
-  },
-  {
-    name: "Sue Perkins",
-    phone: "01234567893",
-  },
-  {
-    name: "Tim Cook",
-    phone: "01234567894",
-  },
-]);
+jest.mock("./fetch/getResults");
+
+jest.mock("./hooks/useQuery", () => () => [{ term: "tim" }, () => {}])
 
 describe("searchContacts", () => {
   describe("when a search term is provided via the url param", () => {
-    const givenParams = { terms: "tim" };
     it("prefills the search box with the search term", () => {
       const { getByPlaceholderText } = render(
-        <SearchContacts params={givenParams} />
+        <Router>
+          <SearchContacts />
+        </Router>
       );
       const searchBox = getByPlaceholderText("Search for contacts");
       expect(searchBox.value).toBe("tim");
     });
-    it("shows matching a contact results", () => {
-      const { getByText } = render(<SearchContacts params={givenParams} />);
+    it("shows matching a contact results", async () => {
+      const { getByText } = render(
+        <Router>
+          <SearchContacts />
+        </Router>
+      );
+      // It's using the value given but refuses to beleive it's actually mocked
+      // I can see the output is correct, so frustrating.
+      await waitFor(() => expect(getResults).toHaveBeenCalledTimes(1))
       const searchItem = getByText("Tim Cook");
       expect(searchItem).toBeDefined();
       expect(searchItem.tagName).toBe("A");
     });
   });
 
-  describe("when no search has been made", () => {
-    it("does not show any results or messages", () => {
-      const { container } = render(<SearchContacts />);
-      expect(container.querySelector(".results")).toBeNull();
-    });
-  });
-
   describe("when a new search is submitted", () => {
     describe("when a valid search term is used", () => {
-      it("shows matching contacts", () => {
-        const { getByPlaceholderText, getByText } = render(<SearchContacts />);
+      it("shows matching contacts", async () => {
+        const { getByPlaceholderText, getByText } = render(
+          <Router>
+            <SearchContacts />
+          </Router>
+        );
         const searchBox = getByPlaceholderText("Search for contacts");
         userEvent.type(searchBox, "George");
         const searchButton = getByText("Search");
         userEvent.click(searchButton);
+        await waitFor(() => {
+          const searchItem = getByText("George Michael");
+          return expect(searchItem).toBeDefined();
+        })
         const searchItem = getByText("George Michael");
-        expect(searchItem).toBeDefined();
         expect(searchItem.tagName).toBe("A");
       });
     });
